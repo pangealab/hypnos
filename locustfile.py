@@ -14,18 +14,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import random
+import random, string
+
 from locust import HttpUser, TaskSet, between
 
 def index(l):
     l.client.get("/")
+
+def ownersFind(l):
+    l.client.get("/owners/find")
+
+def ownersFindRandomLetter(l):
+    l.client.get("/owners?lastName="+generateRandomLetter())
+
+def vets(l):
+    l.client.get("/vets.html")
+
+def generateRandomLetter():
+    randomLetter = random.choice(string.ascii_letters)
+    return randomLetter
 
 class UserBehavior(TaskSet):
 
     def on_start(self):
         index(self)
 
-    tasks = {index: 1}
+    tasks = {
+        index: 1,
+        ownersFind:1,
+        ownersFindRandomLetter: 10,
+        vets: 1
+    }
 
 class WebsiteUser(HttpUser):
     tasks = [UserBehavior]
